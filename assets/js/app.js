@@ -1,7 +1,7 @@
 /* Edat - app wiring. All processing happens locally in the browser. */
 (function () {
   "use strict";
-  window.__edatBuild = 9;
+  window.__edatBuild = 11;
   var Core = window.EdatCore;
   var I18n = window.EdatI18n;
 
@@ -115,6 +115,7 @@
       var recentFiles = recentByPanel[panelId] || (recentByPanel[panelId] = {});
       var ok = [], skipped = 0;
       files.forEach(function (f) {
+        if (f.size === 0) return; /* empty placeholder (staged upload) - real bytes follow */
         if (!accept(f)) { skipped++; return; }
         var fsig = f.name + ":" + f.size + ":" + f.lastModified;
         if (recentFiles[fsig] && now - recentFiles[fsig] < 4000) return; /* same file re-set a moment ago */
