@@ -97,6 +97,8 @@
   });
 
   /* ================= dropzones ================= */
+  var recentByPanel = {}; /* panelId -> {fileSig: timestamp}, reset on Clear */
+
   function setupDropzone(panelId, accept) {
     var dz = panelEl(panelId).querySelector(".dropzone");
     var input = dz.querySelector('input[type="file"]');
@@ -109,10 +111,16 @@
       var now = Date.now();
       if (sig === lastSig && now - lastTime < 800) return;
       lastSig = sig; lastTime = now;
+      var recentFiles = recentByPanel[panelId] || (recentByPanel[panelId] = {});
       var ok = [], skipped = 0;
       files.forEach(function (f) {
-        if (accept(f)) ok.push({ file: f }); else skipped++;
+        if (!accept(f)) { skipped++; return; }
+        var fsig = f.name + ":" + f.size + ":" + f.lastModified;
+        if (recentFiles[fsig] && now - recentFiles[fsig] < 4000) return; /* same file re-set a moment ago */
+        recentFiles[fsig] = now;
+        ok.push({ file: f });
       });
+      if (!ok.length && !skipped) return;
       if (!state[panelId]) state[panelId] = { files: [] };
       if (panelId === "pdf-split" || panelId === "pdf-compress") {
         state[panelId].files = ok.slice(0, 1); // single-file tools
@@ -633,6 +641,7 @@
           if (f.url) URL.revokeObjectURL(f.url);
         });
         state[id] = { files: [] };
+        delete recentByPanel[id];
         setNotice(id, null);
         renderPanel(id);
       }
