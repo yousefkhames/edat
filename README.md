@@ -6,7 +6,7 @@
 
 <p align="center">
   <b>Your file toolbox, right in the browser.</b><br>
-  Compress and convert images. Merge, split and shrink PDFs.<br>
+  Compress and convert images. Turn images into a PDF. Merge, split and shrink PDFs.<br>
   Your files never leave your device - every byte is processed locally with JavaScript.
 </p>
 
@@ -35,6 +35,7 @@ You can even disconnect from the internet after the page loads - everything stil
 | --- | --- |
 | **Compress images** | Quality slider + optional max-dimension resize for JPG, PNG, WebP, GIF, BMP. If the result would be bigger than the original, Edat keeps your original file and tells you. |
 | **Convert images** | Batch convert between PNG, JPG and WebP. |
+| **Images to PDF** | Turn photos and scans into one PDF, one image per page, reordered with arrows. Pages match the image size or fit A4. Phone photo rotation (EXIF) is respected. |
 | **Merge PDFs** | Combine any number of PDFs, reordered with arrows before merging. |
 | **Split PDF** | Extract page ranges (`1-3, 5, 8-10`) into one PDF, a ZIP of per-range PDFs, or a ZIP of every page. |
 | **Compress PDF** | Rebuilds each page as a JPEG image at your chosen quality and resolution. Makes heavy PDFs dramatically smaller. |

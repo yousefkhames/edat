@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
-<link rel="stylesheet" href="assets/css/style.css?v=11">
+<link rel="stylesheet" href="assets/css/style.css?v=12">
 </head>
 <body>
 <div class="grain" aria-hidden="true"></div>
@@ -48,6 +48,10 @@
     <button class="tool-tab" data-panel="pdf-merge" type="button">
       <svg viewBox="0 0 24 24" class="ico"><path d="M6 3h8l4 4v14H6z M14 3v4h4 M9 12h6 M9 16h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
       <span data-i18n="tool.pdfMerge">Merge PDFs</span>
+    </button>
+    <button class="tool-tab" data-panel="img-pdf" type="button">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M6 3h8l4 4v14H6z M14 3v4h4 M8.5 17l2.5-3 2 2 2-2 1.5 3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      <span data-i18n="tool.imgPdf">Images to PDF</span>
     </button>
     <button class="tool-tab" data-panel="pdf-split" type="button">
       <svg viewBox="0 0 24 24" class="ico"><path d="M12 3v18 M12 3l-3 3 M12 3l3 3 M12 21l-3-3 M12 21l3-3 M4 8h4 M16 8h4 M4 16h4 M16 16h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
@@ -167,6 +171,38 @@
     </div>
   </section>
 
+  <!-- ============ IMAGES TO PDF ============ -->
+  <section class="panel" id="panel-img-pdf" aria-labelledby="h-img-pdf">
+    <h2 id="h-img-pdf" data-i18n="tool.imgPdf">Images to PDF</h2>
+    <p class="panel-desc" data-i18n="tool.imgPdf.d"></p>
+    <div class="dropzone" data-drop="img-pdf" tabindex="0" role="button">
+      <p class="drop-title" data-i18n="drop.title">Drop files here</p>
+      <p class="drop-or"><span data-i18n="drop.or">or</span></p>
+      <button type="button" class="btn ghost" data-i18n="drop.browse">Browse files</button>
+      <p class="drop-kinds" data-i18n="drop.images"></p>
+      <input type="file" accept="image/*" multiple hidden>
+    </div>
+    <div class="options">
+      <label class="opt">
+        <span data-i18n="opt.pageSize">Page size</span>
+        <select data-opt="pagesize">
+          <option value="fit" data-i18n="opt.pageFit">Same as image</option>
+          <option value="a4" data-i18n="opt.pageA4">A4 (image fitted)</option>
+        </select>
+      </label>
+      <p class="hint" data-i18n="msg.keptOrderImg"></p>
+      <div class="opt actions">
+        <button class="btn primary" type="button" data-act="topdf" data-i18n="btn.toPdf">Create PDF</button>
+        <button class="btn subtle" type="button" data-act="clear" data-i18n="btn.clear">Clear</button>
+      </div>
+    </div>
+    <div class="notice" data-role="notice" hidden></div>
+    <ul class="results sortable" data-role="results"></ul>
+    <div class="bulkbar" data-role="bulkbar" hidden>
+      <button class="btn primary" type="button" data-act="downloadResult" data-i18n="btn.download">Download</button>
+    </div>
+  </section>
+
   <!-- ============ PDF SPLIT ============ -->
   <section class="panel" id="panel-pdf-split" aria-labelledby="h-pdf-split">
     <h2 id="h-pdf-split" data-i18n="tool.pdfSplit">Split PDF</h2>
@@ -260,9 +296,9 @@
 <script src="vendor/jszip.min.js" defer></script>
 <script src="vendor/pdf-lib.min.js" defer></script>
 <script src="vendor/pdf.min.js" defer></script>
-<script src="assets/js/core.js?v=11" defer></script>
-<script src="assets/js/i18n.js?v=11" defer></script>
-<script src="assets/js/app.js?v=11" defer></script>
+<script src="assets/js/core.js?v=12" defer></script>
+<script src="assets/js/i18n.js?v=12" defer></script>
+<script src="assets/js/app.js?v=12" defer></script>
 <script>if('serviceWorker' in navigator&&location.protocol!=='file:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
 </body>
 </html>

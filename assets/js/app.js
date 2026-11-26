@@ -157,6 +157,7 @@
   setupDropzone("img-compress", Core.isSupportedImage);
   setupDropzone("img-convert", Core.isSupportedImage);
   setupDropzone("pdf-merge", Core.isPdf);
+  setupDropzone("img-pdf", Core.isSupportedImage);
   setupDropzone("pdf-split", Core.isPdf);
   setupDropzone("pdf-compress", Core.isPdf);
 
@@ -222,7 +223,7 @@
       row.appendChild(meta);
 
       var actions = el("div", "row-actions");
-      if (id === "pdf-merge") {
+      if (id === "pdf-merge" || id === "img-pdf") {
         var up = el("button", "btn subtle small", "↑");
         up.title = t("btn.up");
         up.disabled = idx === 0;
@@ -254,7 +255,7 @@
 
     var doneCount = st.files.filter(function (f) { return f.result; }).length;
     if ((id === "img-compress" || id === "img-convert") && doneCount > 1) bulk.hidden = false;
-    if ((id === "pdf-merge" || id === "pdf-split" || id === "pdf-compress") && st.resultBlob) {
+    if ((id === "pdf-merge" || id === "img-pdf" || id === "pdf-split" || id === "pdf-compress") && st.resultBlob) {
       bulk.hidden = false;
       var summary = el("li", "row");
       summary.appendChild(el("span", "pdf-badge", "PDF"));
@@ -472,6 +473,64 @@
     });
   }
 
+  /* ================= images to pdf ================= */
+  function runImgPdf() {
+    var id = "img-pdf";
+    var st = state[id];
+    if (!st || st.files.length < 1) { setNotice(id, t("msg.noFiles"), true); return; }
+    setBusy(id, true, "topdf");
+    setNotice(id, null);
+    st.resultBlob = null;
+    var size = panelEl(id).querySelector('[data-opt="pagesize"]').value;
+    var out, pages = 0;
+    PDFLib.PDFDocument.create().then(function (doc) {
+      out = doc;
+      return st.files.reduce(function (p, entry) {
+        return p.then(function () {
+          return createImageBitmap(entry.file, { imageOrientation: "from-image" }).then(function (bmp) {
+            var cv = document.createElement("canvas");
+            cv.width = bmp.width; cv.height = bmp.height;
+            var ctx = cv.getContext("2d");
+            ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, cv.width, cv.height);
+            ctx.drawImage(bmp, 0, 0);
+            return new Promise(function (res) { cv.toBlob(res, "image/jpeg", 0.92); }).then(function (blob) {
+              return blob.arrayBuffer();
+            }).then(function (bytes) { return out.embedJpg(bytes); }).then(function (img) {
+              var w = img.width, h = img.height, x = 0, y = 0, pw = w, ph = h;
+              if (size === "a4") {
+                pw = 595.28; ph = 841.89;
+                if (w > h) { pw = 841.89; ph = 595.28; }
+                var s = Math.min((pw - 36) / w, (ph - 36) / h);
+                w = w * s; h = h * s; x = (pw - w) / 2; y = (ph - h) / 2;
+              }
+              out.addPage([pw, ph]).drawImage(img, { x: x, y: y, width: w, height: h });
+              pages++;
+              entry.status = "done";
+            });
+          }).catch(function () {
+            entry.status = "failed";
+            entry.error = t("msg.failed");
+          });
+        });
+      }, Promise.resolve());
+    }).then(function () {
+      if (!pages) throw new Error("empty");
+      return out.save();
+    }).then(function (bytes) {
+      setBusy(id, false, "topdf");
+      st.resultBlob = new Blob([bytes], { type: "application/pdf" });
+      st.resultName = "edat-images.pdf";
+      st.resultOriginalSize = 0;
+      addStats(pages, 0);
+      setNotice(id, t("msg.imgPdfDone", { n: pages }));
+      renderPanel(id);
+    }).catch(function () {
+      setBusy(id, false, "topdf");
+      setNotice(id, t("msg.failed"), true);
+      renderPanel(id);
+    });
+  }
+
   /* ================= pdf split ================= */
   function runSplit() {
     var id = "pdf-split";
@@ -637,6 +696,7 @@
       if (act === "process" || act === "compress" && id.indexOf("img") === 0) runImages(id);
       else if (act === "compress") runPdfCompress();
       else if (act === "merge") runMerge();
+      else if (act === "topdf") runImgPdf();
       else if (act === "split") runSplit();
       else if (act === "zip") zipResults(id);
       else if (act === "downloadResult") {
