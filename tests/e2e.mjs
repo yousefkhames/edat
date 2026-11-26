@@ -95,6 +95,14 @@ try {
     document.querySelector('#panel-img-convert .row .name').textContent);
   check("convert: output name shown", /sample/.test(cvName), cvName);
 
+  /* convert png->png keeps the already-smaller original */
+  await page.select('#panel-img-convert [data-opt="format"]', "png");
+  await page.click('#panel-img-convert [data-act="process"]');
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll('#panel-img-convert .row .kept-note')].length >= 1,
+    { timeout: 20000 });
+  check("convert: same-format keeps original with note", true);
+
   /* ---- pdf merge ---- */
   await page.click('[data-panel="pdf-merge"]');
   const mgInput = await page.$('#panel-pdf-merge input[type="file"]');
@@ -141,6 +149,14 @@ try {
     const el = document.querySelector('#panel-pdf-split [data-opt="ranges"]');
     el.value = "";
   });
+
+  /* split: ZIP of every page */
+  await page.select('#panel-pdf-split [data-opt="mode"]', "each");
+  await page.click('#panel-pdf-split [data-act="split"]');
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll('#panel-pdf-split .row .name')]
+      .some((e) => /big-split\.zip/.test(e.textContent)), { timeout: 30000 });
+  check("split: per-page ZIP produced", true);
 
   /* ---- pdf compress ---- */
   await page.click('[data-panel="pdf-compress"]');
