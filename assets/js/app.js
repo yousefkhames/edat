@@ -134,7 +134,11 @@
       else setNotice(panelId, null);
       renderPanel(panelId);
     }
-    dz.addEventListener("click", function () { input.click(); });
+    dz.addEventListener("click", function (e) {
+      /* a click landing on the input itself must not re-trigger it (double file chooser) */
+      if (e.target === input) return;
+      input.click();
+    });
     dz.addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); input.click(); }
     });
