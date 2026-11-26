@@ -100,8 +100,15 @@
   function setupDropzone(panelId, accept) {
     var dz = panelEl(panelId).querySelector(".dropzone");
     var input = dz.querySelector('input[type="file"]');
+    var lastSig = null, lastTime = 0;
     function addFiles(list) {
       var files = Array.prototype.slice.call(list || []);
+      if (!files.length) return;
+      /* guard against double-dispatched change events re-adding the same batch */
+      var sig = files.map(function (f) { return f.name + ":" + f.size; }).join("|");
+      var now = Date.now();
+      if (sig === lastSig && now - lastTime < 800) return;
+      lastSig = sig; lastTime = now;
       var ok = [], skipped = 0;
       files.forEach(function (f) {
         if (accept(f)) ok.push({ file: f }); else skipped++;
