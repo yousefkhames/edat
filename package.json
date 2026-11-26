@@ -1,0 +1,14 @@
+{
+  "name": "edat",
+  "version": "1.0.0",
+  "description": "In-browser file toolbox: compress/convert images, merge/split/compress PDFs. Files never leave the device.",
+  "private": false,
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/core.test.js",
+    "test:e2e": "node tests/e2e.mjs"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.19.0"
+  }
+}

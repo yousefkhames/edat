@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Edat - in-browser file toolbox</title>
+<meta name="description" content="Compress and convert images, merge, split and compress PDFs. 100% client-side: your files never leave your device.">
+<link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="topbar">
+  <a class="brand" href="#top" aria-label="Edat home">
+    <img src="assets/img/logo.svg" alt="" width="34" height="34">
+    <span class="brand-name" data-i18n="app.name">Edat</span>
+  </a>
+  <button id="langToggle" class="chip chip-btn" type="button" data-i18n="lang.switch">العربية</button>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <h1 data-i18n="app.tag">Your file toolbox, right in the browser</h1>
+    <p class="lede" data-i18n="app.sub"></p>
+    <div class="stats" id="statsBar" hidden>
+      <span class="stat"><b id="statFiles">0</b> <span data-i18n="stats.files">files processed</span></span>
+      <span class="stat"><b id="statSaved">0 B</b> <span data-i18n="stats.saved">saved so far</span></span>
+    </div>
+  </section>
+
+  <nav class="tools-nav" aria-label="Tools">
+    <button class="tool-tab active" data-panel="img-compress" type="button">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M4 5h16v12H4z M8 11a2 2 0 1 0 0.01 0 M4 17l5-5 3 3 4-4 4 4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      <span data-i18n="tool.imgCompress">Compress images</span>
+    </button>
+    <button class="tool-tab" data-panel="img-convert" type="button">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M7 7h10l-3-3 M17 17H7l3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-i18n="tool.imgConvert">Convert images</span>
+    </button>
+    <button class="tool-tab" data-panel="pdf-merge" type="button">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M6 3h8l4 4v14H6z M14 3v4h4 M9 12h6 M9 16h6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+      <span data-i18n="tool.pdfMerge">Merge PDFs</span>
+    </button>
+    <button class="tool-tab" data-panel="pdf-split" type="button">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M12 3v18 M12 3l-3 3 M12 3l3 3 M12 21l-3-3 M12 21l3-3 M4 8h4 M16 8h4 M4 16h4 M16 16h4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <span data-i18n="tool.pdfSplit">Split PDF</span>
+    </button>
+    <button class="tool-tab" data-panel="pdf-compress" type="button">
+      <svg viewBox="0 0 24 24" class="ico"><path d="M6 3h8l4 4v14H6z M14 3v4h4 M9 10v8 M9 10l-2.5 2.5 M9 10l2.5 2.5 M15 14v4 M15 18l-2.5-2.5 M15 18l2.5-2.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span data-i18n="tool.pdfCompress">Compress PDF</span>
+    </button>
+  </nav>
+
+  <!-- ============ IMAGE COMPRESS ============ -->
+  <section class="panel active" id="panel-img-compress" aria-labelledby="h-img-compress">
+    <h2 id="h-img-compress" data-i18n="tool.imgCompress">Compress images</h2>
+    <p class="panel-desc" data-i18n="tool.imgCompress.d"></p>
+    <div class="dropzone" data-drop="img-compress" tabindex="0" role="button">
+      <p class="drop-title" data-i18n="drop.title">Drop files here</p>
+      <p class="drop-or"><span data-i18n="drop.or">or</span></p>
+      <button type="button" class="btn ghost" data-i18n="drop.browse">Browse files</button>
+      <p class="drop-kinds" data-i18n="drop.images"></p>
+      <input type="file" accept="image/*" multiple hidden>
+    </div>
+    <div class="options">
+      <label class="opt">
+        <span><span data-i18n="opt.quality">Quality</span> <output data-out="quality">75</output></span>
+        <input type="range" min="10" max="100" step="5" value="75" data-opt="quality">
+      </label>
+      <label class="opt">
+        <span data-i18n="opt.format">Output format</span>
+        <select data-opt="format">
+          <option value="keep" data-i18n="opt.format.keep">Keep original</option>
+          <option value="webp">WebP</option>
+          <option value="jpeg">JPG</option>
+          <option value="png">PNG</option>
+        </select>
+      </label>
+      <label class="opt">
+        <span data-i18n="opt.resize">Max dimension</span>
+        <select data-opt="resize">
+          <option value="0" data-i18n="opt.resize.none">Original size</option>
+          <option value="2560">2560 px</option>
+          <option value="1920">1920 px</option>
+          <option value="1280">1280 px</option>
+          <option value="800">800 px</option>
+        </select>
+      </label>
+      <div class="opt actions">
+        <button class="btn primary" type="button" data-act="process" data-i18n="btn.compress">Compress</button>
+        <button class="btn subtle" type="button" data-act="clear" data-i18n="btn.clear">Clear</button>
+      </div>
+    </div>
+    <div class="notice" data-role="notice" hidden></div>
+    <ul class="results" data-role="results"></ul>
+    <div class="bulkbar" data-role="bulkbar" hidden>
+      <button class="btn primary" type="button" data-act="zip" data-i18n="btn.downloadAll">Download all (ZIP)</button>
+    </div>
+  </section>
+
+  <!-- ============ IMAGE CONVERT ============ -->
+  <section class="panel" id="panel-img-convert" aria-labelledby="h-img-convert">
+    <h2 id="h-img-convert" data-i18n="tool.imgConvert">Convert images</h2>
+    <p class="panel-desc" data-i18n="tool.imgConvert.d"></p>
+    <div class="dropzone" data-drop="img-convert" tabindex="0" role="button">
+      <p class="drop-title" data-i18n="drop.title">Drop files here</p>
+      <p class="drop-or"><span data-i18n="drop.or">or</span></p>
+      <button type="button" class="btn ghost" data-i18n="drop.browse">Browse files</button>
+      <p class="drop-kinds" data-i18n="drop.images"></p>
+      <input type="file" accept="image/*" multiple hidden>
+    </div>
+    <div class="options">
+      <label class="opt">
+        <span data-i18n="opt.format">Output format</span>
+        <select data-opt="format">
+          <option value="webp">WebP</option>
+          <option value="jpeg">JPG</option>
+          <option value="png">PNG</option>
+        </select>
+      </label>
+      <label class="opt">
+        <span><span data-i18n="opt.quality">Quality</span> <output data-out="quality">90</output></span>
+        <input type="range" min="10" max="100" step="5" value="90" data-opt="quality">
+      </label>
+      <div class="opt actions">
+        <button class="btn primary" type="button" data-act="process" data-i18n="btn.process">Process</button>
+        <button class="btn subtle" type="button" data-act="clear" data-i18n="btn.clear">Clear</button>
+      </div>
+    </div>
+    <div class="notice" data-role="notice" hidden></div>
+    <ul class="results" data-role="results"></ul>
+    <div class="bulkbar" data-role="bulkbar" hidden>
+      <button class="btn primary" type="button" data-act="zip" data-i18n="btn.downloadAll">Download all (ZIP)</button>
+    </div>
+  </section>
+
+  <!-- ============ PDF MERGE ============ -->
+  <section class="panel" id="panel-pdf-merge" aria-labelledby="h-pdf-merge">
+    <h2 id="h-pdf-merge" data-i18n="tool.pdfMerge">Merge PDFs</h2>
+    <p class="panel-desc" data-i18n="tool.pdfMerge.d"></p>
+    <div class="dropzone" data-drop="pdf-merge" tabindex="0" role="button">
+      <p class="drop-title" data-i18n="drop.title">Drop files here</p>
+      <p class="drop-or"><span data-i18n="drop.or">or</span></p>
+      <button type="button" class="btn ghost" data-i18n="drop.browse">Browse files</button>
+      <p class="drop-kinds" data-i18n="drop.pdfs"></p>
+      <input type="file" accept="application/pdf,.pdf" multiple hidden>
+    </div>
+    <div class="options">
+      <p class="hint" data-i18n="msg.keptOrder"></p>
+      <div class="opt actions">
+        <button class="btn primary" type="button" data-act="merge" data-i18n="btn.merge">Merge PDFs</button>
+        <button class="btn subtle" type="button" data-act="clear" data-i18n="btn.clear">Clear</button>
+      </div>
+    </div>
+    <div class="notice" data-role="notice" hidden></div>
+    <ul class="results sortable" data-role="results"></ul>
+    <div class="bulkbar" data-role="bulkbar" hidden>
+      <button class="btn primary" type="button" data-act="downloadResult" data-i18n="btn.download">Download</button>
+    </div>
+  </section>
+
+  <!-- ============ PDF SPLIT ============ -->
+  <section class="panel" id="panel-pdf-split" aria-labelledby="h-pdf-split">
+    <h2 id="h-pdf-split" data-i18n="tool.pdfSplit">Split PDF</h2>
+    <p class="panel-desc" data-i18n="tool.pdfSplit.d"></p>
+    <div class="dropzone" data-drop="pdf-split" tabindex="0" role="button">
+      <p class="drop-title" data-i18n="drop.title">Drop files here</p>
+      <p class="drop-or"><span data-i18n="drop.or">or</span></p>
+      <button type="button" class="btn ghost" data-i18n="drop.browse">Browse files</button>
+      <p class="drop-kinds" data-i18n="drop.pdfs"></p>
+      <input type="file" accept="application/pdf,.pdf" hidden>
+    </div>
+    <div class="options">
+      <label class="opt grow">
+        <span data-i18n="opt.ranges">Pages</span>
+        <input type="text" inputmode="numeric" data-opt="ranges" placeholder="1-3, 5">
+        <small class="hint" data-i18n="opt.ranges.hint"></small>
+      </label>
+      <label class="opt">
+        <span data-i18n="opt.mode">Split into</span>
+        <select data-opt="mode">
+          <option value="one" data-i18n="opt.mode.one">One PDF with these pages</option>
+          <option value="ranges" data-i18n="opt.mode.ranges">A separate PDF per range (ZIP)</option>
+          <option value="each" data-i18n="opt.mode.each">Every page on its own (ZIP)</option>
+        </select>
+      </label>
+      <div class="opt actions">
+        <button class="btn primary" type="button" data-act="split" data-i18n="btn.split">Extract pages</button>
+        <button class="btn subtle" type="button" data-act="clear" data-i18n="btn.clear">Clear</button>
+      </div>
+    </div>
+    <div class="notice" data-role="notice" hidden></div>
+    <ul class="results" data-role="results"></ul>
+    <div class="bulkbar" data-role="bulkbar" hidden>
+      <button class="btn primary" type="button" data-act="downloadResult" data-i18n="btn.download">Download</button>
+    </div>
+  </section>
+
+  <!-- ============ PDF COMPRESS ============ -->
+  <section class="panel" id="panel-pdf-compress" aria-labelledby="h-pdf-compress">
+    <h2 id="h-pdf-compress" data-i18n="tool.pdfCompress">Compress PDF</h2>
+    <p class="panel-desc" data-i18n="tool.pdfCompress.d"></p>
+    <div class="dropzone" data-drop="pdf-compress" tabindex="0" role="button">
+      <p class="drop-title" data-i18n="drop.title">Drop files here</p>
+      <p class="drop-or"><span data-i18n="drop.or">or</span></p>
+      <button type="button" class="btn ghost" data-i18n="drop.browse">Browse files</button>
+      <p class="drop-kinds" data-i18n="drop.pdfs"></p>
+      <input type="file" accept="application/pdf,.pdf" hidden>
+    </div>
+    <div class="options">
+      <label class="opt">
+        <span><span data-i18n="opt.quality">Quality</span> <output data-out="quality">60</output></span>
+        <input type="range" min="10" max="95" step="5" value="60" data-opt="quality">
+      </label>
+      <label class="opt">
+        <span data-i18n="opt.scale">Page resolution</span>
+        <select data-opt="scale">
+          <option value="1.0" data-i18n="opt.scale.low">Small (smallest file)</option>
+          <option value="1.5" selected data-i18n="opt.scale.med">Balanced</option>
+          <option value="2.2" data-i18n="opt.scale.high">Sharp (bigger file)</option>
+        </select>
+      </label>
+      <div class="opt actions">
+        <button class="btn primary" type="button" data-act="compress" data-i18n="btn.compress">Compress</button>
+        <button class="btn subtle" type="button" data-act="clear" data-i18n="btn.clear">Clear</button>
+      </div>
+    </div>
+    <p class="hint note" data-i18n="pdf.note"></p>
+    <div class="notice" data-role="notice" hidden></div>
+    <ul class="results" data-role="results"></ul>
+    <div class="bulkbar" data-role="bulkbar" hidden>
+      <button class="btn primary" type="button" data-act="downloadResult" data-i18n="btn.download">Download</button>
+    </div>
+  </section>
+
+  <section class="privacy">
+    <div class="lock" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="30" height="30"><path d="M7 10V7a5 5 0 0 1 10 0v3 M5 10h14v11H5z M12 14v3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h2 data-i18n="privacy.title">Private by design</h2>
+    <p data-i18n="privacy.body"></p>
+  </section>
+</main>
+
+<footer>
+  <p data-i18n="footer.made"></p>
+  <p class="foot-links"><a href="https://github.com/yousefkhames/edat" rel="noopener">GitHub</a> · MIT</p>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="vendor/jszip.min.js" defer></script>
+<script src="vendor/pdf-lib.min.js" defer></script>
+<script src="vendor/pdf.min.js" defer></script>
+<script src="assets/js/core.js" defer></script>
+<script src="assets/js/i18n.js" defer></script>
+<script src="assets/js/app.js" defer></script>
+</body>
+</html>
