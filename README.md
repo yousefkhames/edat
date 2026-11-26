@@ -41,6 +41,10 @@ You can even disconnect from the internet after the page loads - everything stil
 | **Compress PDF** | Rebuilds each page as a JPEG image at your chosen quality and resolution. Makes heavy PDFs dramatically smaller. |
 
 <p align="center">
+  <img src="docs/images-to-pdf-en.png" width="360" alt="Images to PDF with two pages ready to download">
+</p>
+
+<p align="center">
   <img src="docs/compress-en.png" width="720" alt="Compressing images with real savings">
 </p>
 
