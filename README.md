@@ -18,6 +18,15 @@
   <img src="docs/home-en.png" width="720" alt="Edat home in English">
 </p>
 
+## Screenshots
+
+Captured from the live site (https://yousefkhames.github.io/edat/).
+
+<p>
+  <img src="docs/screenshots/live-desktop.png" alt="edat desktop view" width="640">
+  <img src="docs/screenshots/live-mobile.png" alt="edat mobile view" width="200">
+</p>
+
 ## Why Edat
 
 Most "free" file tools upload your documents to a server you know nothing about.
