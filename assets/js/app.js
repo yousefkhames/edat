@@ -1,6 +1,7 @@
 /* Edat - app wiring. All processing happens locally in the browser. */
 (function () {
   "use strict";
+  window.__edatBuild = 9;
   var Core = window.EdatCore;
   var I18n = window.EdatI18n;
 
