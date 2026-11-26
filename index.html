@@ -10,6 +10,8 @@
 <meta property="og:description" content="Compress and convert images, merge, split and compress PDFs. Files never leave your device.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="docs/home-en.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
 <link rel="stylesheet" href="assets/css/style.css?v=11">
 </head>
@@ -261,5 +263,6 @@
 <script src="assets/js/core.js?v=11" defer></script>
 <script src="assets/js/i18n.js?v=11" defer></script>
 <script src="assets/js/app.js?v=11" defer></script>
+<script>if('serviceWorker' in navigator&&location.protocol!=='file:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
 </body>
 </html>
