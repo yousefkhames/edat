@@ -103,6 +103,23 @@ try {
     { timeout: 20000 });
   check("convert: same-format keeps original with note", true);
 
+  /* ---- images to pdf: EXIF rotation, transparency, corrupt file skipped, order ---- */
+  await page.click('[data-panel="img-pdf"]');
+  const ipInput = await page.$('#panel-img-pdf input[type="file"]');
+  await ipInput.uploadFile(join(FIX, "rotated-exif.jpg"), join(FIX, "transparent.png"), join(FIX, "corrupt.jpg"));
+  await waitRows(page, "img-pdf", 3);
+  await page.evaluate(() => { window.__b = []; const o = URL.createObjectURL; URL.createObjectURL = (b) => { window.__b.push(b); return o.call(URL, b); }; HTMLAnchorElement.prototype.click = function () {}; });
+  await page.click('#panel-img-pdf [data-act="topdf"]');
+  await page.waitForFunction(() => document.querySelector('#panel-img-pdf [data-role="notice"]:not([hidden])'), { timeout: 30000 });
+  await page.click('#panel-img-pdf [data-act="downloadResult"]');
+  const ip = await page.evaluate(async () => {
+    const blob = window.__b.filter((b) => b.type === "application/pdf").pop();
+    const doc = await PDFLib.PDFDocument.load(await blob.arrayBuffer());
+    return { pages: doc.getPageCount(), sizes: doc.getPages().map((p) => p.getSize()), failed: [...document.querySelectorAll('#panel-img-pdf .row')].some((r) => /Failed/.test(r.textContent)) };
+  });
+  check("images to pdf: corrupt file skipped, 2 pages made", ip.pages === 2 && ip.failed, JSON.stringify(ip));
+  check("images to pdf: EXIF-rotated photo is portrait (200x400)", Math.round(ip.sizes[0].width) === 200 && Math.round(ip.sizes[0].height) === 400, JSON.stringify(ip.sizes));
+
   /* ---- pdf merge ---- */
   await page.click('[data-panel="pdf-merge"]');
   const mgInput = await page.$('#panel-pdf-merge input[type="file"]');

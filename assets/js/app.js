@@ -497,6 +497,7 @@
               return blob.arrayBuffer();
             }).then(function (bytes) { return out.embedJpg(bytes); }).then(function (img) {
               var w = img.width, h = img.height, x = 0, y = 0, pw = w, ph = h;
+              if (size === "fit" && Math.max(w, h) > 1200) { var k = 1200 / Math.max(w, h); pw = w * k; ph = h * k; w = pw; h = ph; }
               if (size === "a4") {
                 pw = 595.28; ph = 841.89;
                 if (w > h) { pw = 841.89; ph = 595.28; }
